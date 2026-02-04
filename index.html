@@ -12,6 +12,10 @@
             --text-red: #c2185b;
             --hot-pink: #ff4081;
             --soft-pink: #ff80ab;
+            --space-bg-1: #090a0f;
+            --space-bg-2: #1b2735;
+            --neon-blue: #4cc9f0;
+            --neon-purple: #b5179e;
         }
 
         body {
@@ -24,10 +28,16 @@
             align-items: center;
             height: 100vh;
             color: var(--text-red);
-            overscroll-behavior: none;
+            transition: background-color 1.5s ease;
         }
 
-        /* The Main Card */
+        body.space-mode {
+            background: radial-gradient(ellipse at bottom, var(--space-bg-2) 0%, var(--space-bg-1) 100%);
+            font-family: 'Courier New', monospace;
+            color: #fff;
+        }
+
+        /* === POOKIE CARD === */
         .pookie-card {
             background: var(--card-white);
             width: 100%;
@@ -39,133 +49,150 @@
             display: flex;
             flex-direction: column;
             box-shadow: 0 0 25px rgba(255, 64, 129, 0.2);
+            transition: transform 1s ease, opacity 1s ease;
+            z-index: 10;
         }
 
         @media (min-width: 500px) {
-            .pookie-card {
-                height: 85vh;
-                border-radius: 35px;
-            }
+            .pookie-card { height: 85vh; border-radius: 35px; }
         }
 
-        /* === PROGRESS BARS === */
-        .progress-container {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            display: flex;
-            gap: 4px; /* Slightly tighter gap to fit 9 bars */
-            z-index: 20;
-        }
-
-        .progress-bar {
-            height: 6px;
-            background: rgba(255, 64, 129, 0.2);
-            flex: 1;
-            border-radius: 10px;
-            transition: background 0.3s ease;
-        }
-
-        .progress-bar.active {
-            background: var(--hot-pink);
-        }
-
-        /* === SLIDES === */
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        /* === SPACE CONTAINER === */
+        .space-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; 
+            flex-direction: column; 
+            justify-content: center; 
             align-items: center;
-            opacity: 0;
-            transform: scale(0.95);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
-            padding: 25px;
+            text-align: center; 
+            z-index: 5; 
+            padding: 20px; 
             box-sizing: border-box;
-            text-align: center;
+            overflow-y: hidden; /* Prevent scroll */
         }
 
-        .slide.active {
-            opacity: 1;
-            transform: scale(1);
+        /* Stars & Background Effects */
+        .stars {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none; opacity: 0; transition: opacity 2s ease;
+        }
+        .star {
+            position: absolute; background: white; border-radius: 50%;
+            box-shadow: 0 0 4px #fff;
+            animation: twinkle var(--duration) infinite ease-in-out;
         }
 
-        /* Typography */
+        /* Shooting Star */
+        .shooting-star {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 4px; height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(255,255,255,0.1), 0 0 0 8px rgba(255,255,255,0.1), 0 0 20px rgba(255,255,255,1);
+            animation: shoot 3s linear infinite;
+            opacity: 0;
+        }
+
+        /* === UI ELEMENTS === */
+        .progress-container {
+            position: absolute; top: 20px; left: 20px; right: 20px;
+            display: flex; gap: 4px; z-index: 20;
+        }
+        .progress-bar {
+            height: 6px; background: rgba(255, 64, 129, 0.2);
+            flex: 1; border-radius: 10px; transition: background 0.3s ease;
+        }
+        .progress-bar.active { background: var(--hot-pink); }
+
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; transform: scale(0.95); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none; padding: 25px; box-sizing: border-box; text-align: center;
+        }
+        .slide.active { opacity: 1; transform: scale(1); pointer-events: auto; }
+
         h1 { font-size: 2.4rem; margin-bottom: 10px; color: var(--hot-pink); line-height: 1.2; }
         h2 { font-size: 1.4rem; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; color: var(--soft-pink); }
         p { font-size: 1.1rem; line-height: 1.6; max-width: 90%; margin: 5px 0; }
 
         .big-stat {
-            font-size: 3.2rem;
-            font-weight: 900;
-            color: var(--hot-pink);
-            margin: 15px 0;
-            text-shadow: 2px 2px 0px #ffe0ea;
-            animation: bounce 2s infinite;
+            font-size: 3.2rem; font-weight: 900; color: var(--hot-pink);
+            margin: 15px 0; text-shadow: 2px 2px 0px #ffe0ea; animation: bounce 2s infinite;
         }
 
-        /* List style for vocabulary */
-        .vocab-list {
-            font-size: 1.8rem;
-            font-weight: bold;
-            text-align: left;
-            margin-top: 10px;
-        }
-        .vocab-item {
-            margin-bottom: 10px;
-            color: var(--hot-pink);
-        }
-        .vocab-number {
-            color: var(--soft-pink);
-            margin-right: 10px;
-        }
+        .vocab-list { font-size: 1.8rem; font-weight: bold; text-align: left; margin-top: 10px; }
+        .vocab-item { margin-bottom: 10px; color: var(--hot-pink); }
+        .vocab-number { color: var(--soft-pink); margin-right: 10px; }
 
-        /* === TIMER === */
         #timer {
-            font-family: 'Courier New', monospace;
-            font-size: 1.1rem;
-            font-weight: bold;
-            background: var(--bg-pink);
-            padding: 15px 10px;
-            border-radius: 50px;
-            color: var(--hot-pink);
-            margin-top: 30px;
-            width: 90%;
-            border: 2px solid var(--soft-pink);
+            font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: bold;
+            background: var(--bg-pink); padding: 15px 10px; border-radius: 50px;
+            color: var(--hot-pink); margin-top: 30px; width: 90%; border: 2px solid var(--soft-pink);
         }
 
-        /* === INTERACTION LAYER === */
-        .interaction-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
+        /* === BUTTON STYLES === */
+        .warp-btn {
+            background: linear-gradient(45deg, #ff4081, #c2185b);
+            color: white; border: none; padding: 15px 30px; border-radius: 50px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(255, 64, 129, 0.4);
+            animation: pulse 2s infinite;
+            transition: transform 0.2s;
+            position: relative; 
+            z-index: 100;
+        }
+        .warp-btn:active { transform: scale(0.95); }
+
+        /* === IMPROVED SPACE TEXT === */
+        .space-text {
+            font-size: 1.1rem; 
+            margin-bottom: 15px; 
+            opacity: 0;
+            transform: translateY(20px); 
+            transition: all 0.8s ease;
+            max-width: 600px;
             width: 100%;
-            height: 100%;
-            z-index: 9999;
-            display: flex;
+            line-height: 1.5;
+            text-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+        }
+        .space-text.visible { opacity: 1; transform: translateY(0); animation: float 6s ease-in-out infinite; }
+
+        .highlight-blue { color: var(--neon-blue); font-weight: bold; }
+        .highlight-pink { color: var(--hot-pink); font-weight: bold; }
+
+        #final-odds {
+            font-size: clamp(2rem, 5vw, 3.5rem); /* Responsive Font Size */
+            font-weight: bold; color: var(--neon-blue);
+            text-shadow: 0 0 20px var(--neon-blue); 
+            margin: 20px 0; 
+            opacity: 0;
+            word-break: break-all; /* Prevents overflow */
         }
 
-        .tap-zone {
-            width: 50%;
-            height: 100%;
-            cursor: pointer;
+        /* Animations */
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes heartBeat { 0% { transform: scale(1); } 15% { transform: scale(1.1); } 30% { transform: scale(1); } 45% { transform: scale(1.1); } 60% { transform: scale(1); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        @keyframes shoot {
+            0% { transform: translate(0, 0) rotate(45deg) scale(0); opacity: 0; }
+            5% { opacity: 1; }
+            15% { transform: translate(200px, 200px) rotate(45deg) scale(1); opacity: 0; }
+            100% { transform: translate(200px, 200px) rotate(45deg) scale(1); opacity: 0; }
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
     </style>
 </head>
 <body>
 
-    <div class="pookie-card">
+    <div class="stars" id="star-layer">
+        <div class="shooting-star"></div>
+    </div>
+
+    <div class="pookie-card" id="mainCard">
 
         <div class="progress-container">
             <div class="progress-bar active" id="p0"></div>
@@ -183,146 +210,219 @@
             <h1>Happy Valentine's Day</h1>
             <h2>My Pookie Anjana ❤️</h2>
             <p>I made this website just for you.</p>
-            <p style="margin-top: 20px; font-size: 0.9rem; color: var(--soft-pink);">(Swipe or Tap right to continue)</p>
+            <p style="font-size: 0.8rem; color: var(--soft-pink); margin-top:20px;">(Swipe or Tap right)</p>
         </div>
 
         <div class="slide" id="slide1">
-            <h2>Top Genre</h2>
-            <div class="big-stat">YAPANESE 🗣️</div>
-            <p>You speak it fluently.</p>
-            <p>I listened to approximately <strong>1 billion words</strong> this year, and I loved every single one.</p>
+            <h2>Top Genre</h2><div class="big-stat">YAPANESE 🗣️</div>
+            <p>You speak it fluently.</p><p>I listened to <strong>1 billion words</strong> this year, and loved every one.</p>
         </div>
 
         <div class="slide" id="slide2">
-            <h2>Your "Special" Skill</h2>
-            <div class="big-stat">CRY BABY 🥺</div>
-            <p>From happy tears to "I dropped my spoon" tears.</p>
-            <p>You are the cutest emotional rollercoaster ride ever.</p>
+            <h2>Your "Special" Skill</h2><div class="big-stat">CRY BABY 🥺</div>
+            <p>From happy tears to "dropped spoon" tears.</p><p>Best emotional rollercoaster ever.</p>
         </div>
 
         <div class="slide" id="slide3">
-            <h2>Your Spirit Animal</h2>
-            <div class="big-stat">RACCOON 🦝</div>
-            <p>Cute? Yes.</p>
-            <p>Chaotic? Also yes.</p>
-            <p>I would catch a hundred of them just for you.</p>
+            <h2>Spirit Animal</h2><div class="big-stat">RACCOON 🦝</div>
+            <p>Cute? Yes. Chaotic? Yes.</p><p>I'd catch a hundred for you.</p>
         </div>
 
         <div class="slide" id="slide4">
-            <h2>Official Title</h2>
-            <div class="big-stat">MOMMY 🥵</div>
-            <p>I don't make the rules.</p>
-            <p>That's just what it is. 🤷‍♂️</p>
+            <h2>Official Title</h2><div class="big-stat">MOMMY 🥵</div>
+            <p>I don't make the rules.</p><p>It is what it is. 🤷‍♂️</p>
         </div>
 
         <div class="slide" id="slide5">
-            <h2>Most Spoken Words</h2>
+            <h2>Most Spoken</h2>
             <div class="vocab-list">
                 <div class="vocab-item"><span class="vocab-number">#1</span> THENGA 🥥</div>
                 <div class="vocab-item"><span class="vocab-number">#2</span> KUNDHM</div>
             </div>
-            <p style="margin-top: 20px;">Truly a poet.</p>
         </div>
 
         <div class="slide" id="slide6">
-            <h2>Least Spoken Word</h2>
-            <div class="big-stat" style="font-size: 2.5rem;">"My Baby Boy"</div>
-            <p><strong>Total Count:</strong> 3 Times.</p>
-            <p style="font-size: 3rem; margin-top: 10px;">😒</p>
-            <p>We need to fix these numbers.</p>
+            <h2>Least Spoken</h2><div class="big-stat" style="font-size:2.5rem;">"My Baby Boy"</div>
+            <p><strong>Count:</strong> 3 Times.</p><p style="font-size:3rem;">😒</p>
         </div>
 
         <div class="slide" id="slide7">
-            <h2>Top 0.001% Reward</h2>
-            <div class="big-stat">THAT SMILE ✨</div>
-            <p>Scientifically proven to fix my mood instantly.</p>
-            <p>Please keep doing it.</p>
+            <h2>Top Reward</h2><div class="big-stat">THAT SMILE ✨</div>
+            <p>Scientifically proven to fix my mood.</p>
         </div>
 
         <div class="slide" id="slide8">
             <h2>We have been together for:</h2>
             <div id="timer">Calculating love...</div>
-            <p style="margin-top: 30px;">And I'm not going anywhere.</p>
-            <p style="font-weight: bold; margin-top: 10px;">I Love You, Anjana.</p>
-        </div>
+            <p style="margin-top: 20px;">And I'm not going anywhere.</p>
 
-        <div class="interaction-layer" id="touchArea">
-            <div class="tap-zone" onclick="prevSlide()"></div>
-            <div class="tap-zone" onclick="nextSlide()"></div>
+            <button class="warp-btn" onclick="goToSpace(event)">
+                Show Probability of Us 🚀
+            </button>
         </div>
 
     </div>
 
+    <div class="space-container" id="spaceWorld">
+        <div class="space-text" id="txt1">
+            If gravity was slightly stronger,<br>the universe would have collapsed.
+        </div>
+        <div class="space-text" id="txt2">
+            If it was slightly weaker,<br>stars would never have formed.
+        </div>
+        <div class="space-text" id="txt3">
+            But the universe was <span class="highlight-blue">perfectly fine-tuned</span>.
+        </div>
+        <div class="space-text" id="txt4">
+            Billions of years. <br>8 Billion people.
+        </div>
+        <div class="space-text" id="txt5">
+             Everything led to <span class="highlight-pink">this moment.</span>
+        </div>
+
+        <div id="final-odds">1 in 0</div>
+
+        <div class="space-text" id="txt6"> The math says it's impossible.</div>
+        <div class="space-text" id="txt7" style="margin-top: 20px; font-size: 1.3rem;"> But looking at you?</div>
+        <div class="space-text" id="txt8" style="color: var(--hot-pink); font-weight: bold; font-size: 1.8rem; margin-top: 20px;">
+            I like those odds. <br> Happy Valentine's Day. <br> ❤️
+        </div>
+    </div>
+
     <script>
-        // === CONFIGURATION ===
-        // DATE: August 27, 2025 at 8:47 PM
         const startDate = new Date("2025-08-27T20:47:00").getTime();
-
         let currentSlide = 0;
-        const totalSlides = 9; // INCREASED TO 9
+        const totalSlides = 9;
 
+        // === SLIDE LOGIC ===
         function showSlide(index) {
-            // Update Slides
             document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
             document.getElementById('slide' + index).classList.add('active');
 
-            // Update Progress Bars
             document.querySelectorAll('.progress-bar').forEach((p, i) => {
-                if (i <= index) {
-                    p.classList.add('active');
-                } else {
-                    p.classList.remove('active');
-                }
+                p.classList.toggle('active', i <= index);
             });
         }
 
         function nextSlide() {
-            if (currentSlide < totalSlides - 1) {
-                currentSlide++;
-                showSlide(currentSlide);
-            }
+            if (currentSlide < totalSlides - 1) { currentSlide++; showSlide(currentSlide); }
         }
-
         function prevSlide() {
-            if (currentSlide > 0) {
-                currentSlide--;
-                showSlide(currentSlide);
-            }
+            if (currentSlide > 0) { currentSlide--; showSlide(currentSlide); }
         }
 
         // === SWIPE LOGIC ===
         let touchStartX = 0;
         let touchEndX = 0;
-        const touchArea = document.getElementById('touchArea');
+        const card = document.getElementById('mainCard');
 
-        touchArea.addEventListener('touchstart', function(e) {
+        card.addEventListener('touchstart', e => {
             touchStartX = e.changedTouches[0].screenX;
-        }, false);
+        }, {passive: true});
 
-        touchArea.addEventListener('touchend', function(e) {
+        card.addEventListener('touchend', e => {
             touchEndX = e.changedTouches[0].screenX;
             handleSwipe();
-        }, false);
+        }, {passive: true});
+
+        card.addEventListener('click', e => {
+            if(e.target.closest('button')) return;
+            const width = window.innerWidth;
+            if(e.clientX > width / 2) nextSlide();
+            else prevSlide();
+        });
 
         function handleSwipe() {
-            if (touchEndX < touchStartX - 50) nextSlide(); 
-            if (touchEndX > touchStartX + 50) prevSlide(); 
+            if (touchEndX < touchStartX - 50) nextSlide();
+            if (touchEndX > touchStartX + 50) prevSlide();
         }
 
-        // === TIMER LOGIC ===
-        setInterval(function() {
-            const now = new Date().getTime();
-            const difference = now - startDate;
-
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-            document.getElementById("timer").innerHTML = 
-                days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+        // === TIMER ===
+        setInterval(() => {
+            const diff = new Date().getTime() - startDate;
+            const d = Math.floor(diff / (1000*60*60*24));
+            const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+            const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+            const s = Math.floor((diff % (1000*60)) / 1000);
+            document.getElementById("timer").innerText = `${d}d ${h}h ${m}m ${s}s`;
         }, 1000);
 
+        // === SPACE TRANSITION ===
+        function goToSpace(event) {
+            if(event) event.stopPropagation();
+
+            document.body.classList.add('space-mode');
+            document.getElementById('mainCard').style.transform = "scale(0.1)";
+            document.getElementById('mainCard').style.opacity = "0";
+
+            setTimeout(() => {
+                document.getElementById('mainCard').style.display = "none";
+                document.getElementById('spaceWorld').style.display = "flex";
+                generateStars();
+                runSpaceSequence();
+            }, 800);
+        }
+
+        function generateStars() {
+            const layer = document.getElementById('star-layer');
+            layer.style.opacity = 1;
+            // Create static stars
+            for(let i=0; i<150; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random()*100 + '%';
+                star.style.top = Math.random()*100 + '%';
+                const size = Math.random()*3;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.setProperty('--duration', (Math.random()*3+2)+'s');
+                layer.appendChild(star);
+            }
+
+            // Randomize shooting star delay
+            setInterval(() => {
+                const shoot = document.querySelector('.shooting-star');
+                shoot.style.top = Math.random() * 50 + '%';
+                shoot.style.left = Math.random() * 50 + '%';
+            }, 4000);
+        }
+
+        function runSpaceSequence() {
+            // Sequence of text appearances
+            const delays = [500, 3500, 6500, 9500, 12500];
+
+            delays.forEach((delay, i) => {
+                setTimeout(() => {
+                    document.getElementById('txt'+(i+1)).classList.add('visible');
+                }, delay);
+            });
+
+            // Start Counter
+            setTimeout(() => {
+                const counter = document.getElementById('final-odds');
+                counter.style.opacity = 1;
+                let power = 0;
+
+                const interval = setInterval(() => {
+                    power += Math.floor(Math.random()*100000);
+                    counter.innerText = "1 in 10^" + power.toLocaleString();
+
+                    if(power > 2685000) {
+                        clearInterval(interval);
+                        counter.innerText = "1 in 10^2,685,000";
+                        counter.style.color = "#ff4081";
+                        counter.style.animation = "heartBeat 1.5s infinite";
+
+                        // Final text sequence
+                        setTimeout(() => {
+                            document.getElementById('txt6').classList.add('visible');
+                            setTimeout(() => document.getElementById('txt7').classList.add('visible'), 2500);
+                            setTimeout(() => document.getElementById('txt8').classList.add('visible'), 5000);
+                        }, 1000);
+                    }
+                }, 50);
+            }, 15000); // Waits for all text to finish
+        }
     </script>
 </body>
 </html>
